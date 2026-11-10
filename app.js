@@ -1,0 +1,22 @@
+document.addEventListener("DOMContentLoaded", () => {
+ const $=(s,scope=document)=>scope.querySelector(s), $$=(s,scope=document)=>[...scope.querySelectorAll(s)];
+ const menuToggle=$("#menuToggle"),mainNav=$("#mainNav");
+ menuToggle?.addEventListener("click",()=>{const open=mainNav.classList.toggle("open");menuToggle.setAttribute("aria-expanded",String(open));});
+ $$("#mainNav a").forEach(link=>link.addEventListener("click",()=>{mainNav.classList.remove("open");menuToggle?.setAttribute("aria-expanded","false");}));
+ const featureContent={
+ backrest:{index:"01 / 04",eyebrow:"COMFORT, YOUR WAY",title:"Find your<br><em>comfortable angle.</em>",text:"Atur posisi sandaran punggung sesuai kebutuhan untuk membaca, bekerja, atau beristirahat."},
+ legrest:{index:"02 / 04",eyebrow:"PUT YOUR FEET UP",title:"A little more<br><em>room to relax.</em>",text:"Sandaran kaki yang dapat diatur membantu memberikan posisi istirahat yang lebih nyaman."},
+ table:{index:"03 / 04",eyebrow:"READY WHEN YOU ARE",title:"A handy space<br><em>for your routine.</em>",text:"Meja lipat menjadi area praktis untuk mendukung aktivitas ringan seperti membaca atau bekerja."},
+ fold:{index:"04 / 04",eyebrow:"MAKE SPACE",title:"Flexible comfort.<br><em>Practical storage.</em>",text:"Mekanisme lipat dirancang agar produk lebih mudah disimpan ketika tidak digunakan."}};
+ $$(".feature-tab").forEach(tab=>tab.addEventListener("click",()=>{$$(".feature-tab").forEach(item=>{item.classList.remove("active");item.setAttribute("aria-selected","false");});tab.classList.add("active");tab.setAttribute("aria-selected","true");const data=featureContent[tab.dataset.feature];$("#detailIndex").textContent=data.index;$("#detailEyebrow").textContent=data.eyebrow;$("#detailTitle").innerHTML=data.title;$("#detailText").textContent=data.text;const image=$("#featureImage");image.style.opacity=".25";setTimeout(()=>image.style.opacity="1",130);}));
+ const modeCopy={read:"Ambil buku favorit, atur sandaran, dan nikmati waktu membaca dengan lebih nyaman.",work:"Gunakan ruang duduk yang nyaman untuk menyelesaikan pekerjaan atau aktivitas ringan.",rest:"Saat waktunya beristirahat, atur sandaran dan gunakan sandaran kaki untuk bersantai."};
+ $$(".mode-btn").forEach(button=>button.addEventListener("click",()=>{$$(".mode-btn").forEach(item=>item.classList.remove("active"));button.classList.add("active");$("#modeDescription").textContent=modeCopy[button.dataset.mode];}));
+ const video=$("#promoVideo"),overlay=$("#videoOverlay"),playVideo=()=>{if(!video)return;video.play().then(()=>overlay.classList.add("hidden")).catch(()=>showToast("Tekan tombol play pada video untuk memulai."));};
+ $("#playVideo")?.addEventListener("click",playVideo);$("#watchVideo")?.addEventListener("click",()=>{$("#video").scrollIntoView({behavior:"smooth"});setTimeout(playVideo,500);});
+ video?.addEventListener("play",()=>overlay.classList.add("hidden"));video?.addEventListener("pause",()=>{if(video.currentTime<video.duration)overlay.classList.remove("hidden");});video?.addEventListener("ended",()=>overlay.classList.remove("hidden"));
+ $("#contactForm")?.addEventListener("submit",event=>{event.preventDefault();const name=$("#visitorName").value.trim(),email=$("#visitorEmail").value.trim(),message=$("#visitorMessage").value.trim();if(!name||!email||!message)return;const subject=encodeURIComponent("Pertanyaan mengenai Sit & Fold"),body=encodeURIComponent(`Nama: ${name}\nEmail: ${email}\n\nPesan:\n${message}`);showToast("Membuka aplikasi email untuk menyiapkan pesan…");window.location.href=`mailto:?subject=${subject}&body=${body}`;});
+ let toastTimer;function showToast(message){const toast=$("#toast");toast.textContent=message;toast.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove("show"),3200);}
+ const revealTargets=$$(".story-grid,.story-image,.section-heading,.feature-layout,.experience-copy,.experience-visual,.video-frame,.gallery-grid,.contact-inner");revealTargets.forEach(element=>element.classList.add("reveal"));
+ if("IntersectionObserver"in window){const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add("visible");observer.unobserve(entry.target);}}),{threshold:.12});revealTargets.forEach(element=>observer.observe(element));}else revealTargets.forEach(element=>element.classList.add("visible"));
+ $("#year").textContent=new Date().getFullYear();
+});
